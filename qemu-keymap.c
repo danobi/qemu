@@ -203,6 +203,7 @@ int main(int argc, char *argv[])
     map = xkb_keymap_new_from_names(ctx, &names, XKB_KEYMAP_COMPILE_NO_FLAGS);
     if (!map) {
         /* libxkbcommon prints error */
+        xkb_context_unref(ctx);
         exit(1);
     }
 
@@ -227,7 +228,11 @@ int main(int argc, char *argv[])
     state = xkb_state_new(map);
     xkb_keymap_key_for_each(map, walk_map, state);
     xkb_state_unref(state);
+    xkb_keymap_unref(map);
+    xkb_context_unref(ctx);
     state = NULL;
+    map = NULL;
+    ctx = NULL;
 
     /* add quirks */
     fprintf(outfile,
